@@ -333,8 +333,8 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    padding: 8% 0;
+    justify-content: flex-start;
+    padding: 0;
     gap: 0;
   }
 
@@ -669,6 +669,15 @@
       </div>
     </div>
 
+    <div>
+      <p class="ctrl-section-title">Posição vertical da frase</p>
+      <div class="range-row">
+        <input type="range" id="vertPos" min="0" max="100" value="50" oninput="updateVertPos(this.value)">
+        <span class="range-val" id="vertPosVal">Centro</span>
+      </div>
+      <p style="font-size:10px; color:var(--ui-muted); margin-top:6px; line-height:1.5;">0 = topo · 50 = centro · 100 = base</p>
+    </div>
+
     <div class="ctrl-divider"></div>
 
     <div>
@@ -725,7 +734,7 @@
               <div class="qc-theme-rule" style="background:#f4f2ee;" id="themeRuleBot"></div>
             </div>
           </div>
-          <div class="qc-body">
+          <div class="qc-body" id="qcBody">
             <div class="qc-openquote" style="font-size:96px; color:#f4f2ee;">"</div>
             <div class="qc-rule" style="color:#f4f2ee;"></div>
             <p class="qc-quote" id="cardQuote" style="font-size:40px; color:#f4f2ee;"></p>
@@ -878,6 +887,22 @@
     document.getElementById('cardQuote').style.fontSize = val + 'px';
     document.getElementById('fontSizeVal').textContent = val;
   }
+
+  function updateVertPos(val) {
+    const body = document.getElementById('qcBody');
+    const num = parseInt(val);
+    // Convert 0-100 to padding-top: at 50 it looks centered, 0 = top, 100 = bottom
+    const pct = num === 50 ? '8%' : (num < 50 ? (num * 0.16) + '%' : (num * 0.16) + '%');
+    body.style.paddingTop = pct;
+    body.style.justifyContent = num > 70 ? 'flex-end' : 'flex-start';
+    body.style.paddingBottom = num > 70 ? ((100 - num) * 0.3) + '%' : '0';
+    // Label
+    const label = num < 20 ? 'Topo' : num > 80 ? 'Base' : num === 50 ? 'Centro' : num < 50 ? 'Alto' : 'Baixo';
+    document.getElementById('vertPosVal').textContent = label;
+  }
+
+  // Init vertical position to center
+  updateVertPos(50);
 
   // ─── IMAGE UPLOAD ───
   function handleImageUpload(event) {
